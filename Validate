@@ -1,0 +1,102 @@
+#!/usr/bin/env python
+
+## @file Validate_Engine
+## @brief python wrapper that runs the OEM test suite across all supported operating systems
+
+from sys import argv
+import os
+import subprocess
+
+def get_box(os):
+    if os.lower() == 'fedora':
+        return('  config.vm.box = "fedora/24-cloud-base"\n'
+        + '  config.vm.provision "shell", inline: <<-SHELL\n'\
+        + '    sudo dnf install -y python-pip\n'\
+        + '    sudo pip install pytest\n'\
+        + '  SHELL\n')
+    elif os.lower() == 'centos':
+        return('  config.vm.box = "centos/7"\n'
+        + '  config.vm.provision "shell", inline: <<-SHELL\n'\
+        + '    sudo yum install -y epel-release\n'\
+        + '    sudo yum install -y python-pip\n'\
+        + '    sudo pip install pytest\n'\
+        + '  SHELL\n')
+    elif os.lower() == 'ubuntu':
+        return('  config.vm.box = "bento/ubuntu-16.04"\n'
+        + '  config.vm.provision "shell", inline: <<-SHELL\n'\
+        + '    sudo apt-get install -y python-pip\n'\
+        + '    sudo pip install pytest\n'\
+        + '  SHELL\n')
+    elif os.lower() == 'debian':
+        return('  config.vm.box = "debian/jessie64"\n'
+        + '  config.vm.provision "shell", inline: <<-SHELL\n'\
+        + '    sudo apt-get install -y python-pip\n'\
+        + '    sudo pip install pytest\n'\
+        + '  SHELL\n')
+    else:
+        pass
+
+def setup_system(os_name):
+    vm_dir = os_name.lower() + '_test_system'
+    os.chdir(os.path.expanduser('~') + '/.vm')
+    os.mkdir(vm_dir)
+    os.chdir(vm_dir)
+    # copy test artifacts into the vm share directory
+    os.system('cp ' + os.path.expanduser('~') + '/Repositories/vm-bashrc/* .')
+    os.system('cp ' + os.path.expanduser('~') + '/Builds/* .')
+    os.system('cp -r ' + os.path.expanduser('~') + '/Repositories/OEMValidation/* .')
+    #os.system('cp -r ' + os.path.expanduser('~') + '/Repositories/EngineUtils bin')
+    # generate config file
+    with open("Vagrantfile", "w") as vagrantfile:
+        vagrantfile.write('Vagrant.configure(2) do |config|\n')
+        vagrantfile.write(get_box(os_name.lower()))
+        vagrantfile.write('  config.ssh.insert_key = false\n')
+        vagrantfile.write('end\n')
+    # start up the vm
+    os.system('vagrant box update > /dev/null')
+    os.system('vagrant up > /dev/null')
+
+def teardown_system(os_name):
+    os.chdir(os.path.expanduser('~') + '/.vm')
+    os.chdir(os_name + '_test_system')
+    os.system('vagrant destroy -f > /dev/null')
+    os.getcwd()
+    os.chdir('..')
+    os.system('rm -rf ' + os_name + '_test_system')
+
+def run_tests():
+    os.system("vagrant ssh -c 'cd /vagrant; py.test -v' 2> /dev/null | grep '::'") #clean output
+    #os.system("vagrant ssh -c 'cd /vagrant; py.test -v'") #debug output
+
+def get_file_version():
+    mydir = os.listdir(os.path.expanduser('~') + '/Builds')
+    for i in mydir:
+        if i.split('_amd64'[0])[1].split('-')[0] == '0.7.0':
+            version = i.split('_')[1]
+        else:
+            version = '0'
+    return version
+
+BUILD = get_file_version()
+
+print('\n' + BUILD + ' // Ubuntu16 // oem test suite')
+setup_system('ubuntu')
+run_tests()
+teardown_system('ubuntu')
+
+print('\n' + BUILD + ' // Centos7 // oem test suite')
+setup_system('centos')
+run_tests()
+teardown_system('centos')
+
+''' # samplescored is broken on fedora24, and fedora isn't officially supported until we have customers that use it
+print('\n' + BUILD + ' // Fedora24 // oem test suite')
+setup_system('fedora')
+run_tests()
+teardown_system('fedora')
+'''
+
+print('\n' + BUILD + ' // Debian8 // oem test suite')
+setup_system('debian')
+run_tests()
+teardown_system('debian')

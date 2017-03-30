@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+// $ npm install serve-static
+// $ npm install serve-index
+// $ npm install finalhandler
+var finalhandler = require('finalhandler')
+var http = require('http')
+var serveIndex = require('serve-index')
+var serveStatic = require('serve-static')
+var os = require('os')
+
+// Serve directory indexes for public/ftp folder (with icons)
+var index = serveIndex('.', {'icons': true})
+
+// Serve up public/ftp folder files
+var serve = serveStatic('.')
+
+// Create server
+var server = http.createServer(function onRequest(req, res){
+  var done = finalhandler(req, res)
+  serve(req, res, function onNext(err) {
+    if (err) return done(err)
+    index(req, res, done)
+  })
+})
+
+// Listen
+server.listen(3000)
+
+//display IP
+var ip_address = os.networkInterfaces()['en5'][0].address
+console.log('http://' + ip_address + ':3000')

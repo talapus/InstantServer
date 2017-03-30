@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+
+from sys import argv
+
+def usage():
+    print('Usage: Binary #')
+
+
+try:
+    print "{0:b}".format(int(argv[1]))
+    # bin(argv[1]).split('0b')[1]   # also
+except IndexError:
+    usage()
+except ValueError:
+    usage()
