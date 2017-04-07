@@ -1,2 +1,0 @@
-python -c 'import time; print time.time()'  # more precise
-# date +%s                                  # less precise
