@@ -16,7 +16,7 @@ def setup():
 def test_service(test_input):
 	assert os.system('echo ' + test_input) == 0
 
-@pytest.mark.parametrize(("black", "white"), [
+@pytest.mark.parametrize(("one", "two"), [
     (0, 0),
     (9, 9),
     (99, 99),
@@ -24,7 +24,7 @@ def test_service(test_input):
 	(9999, 9999),
 	(99999, 99999),
 ])
-def test_thing(black, white):
+def test_thing(one, two):
 	assert os.system('echo ') == 0
 
 '''
