@@ -1,1 +1,1 @@
-(https://i.ytimg.com/vi/tckwtXoJDZU/hqdefault.jpg)
+![image](https://i.ytimg.com/vi/tckwtXoJDZU/hqdefault.jpg)
