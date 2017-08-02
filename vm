@@ -60,12 +60,12 @@ def setup_system(os_name):
     os.chdir(os.path.expanduser('~') + '/.vm')
     os.mkdir(vm_dir)
     os.chdir(vm_dir)
-    # copy test artifacts into the vm's share directory
-    os.system('cp ' + os.path.expanduser('~') + '/Repositories/vm-bashrc/* .')
-    os.system('cp ' + os.path.expanduser('~') + '/Builds/* .')
-    os.system('cp -r ' + os.path.expanduser('~') + '/Repositories/OEMValidation/* .')
-    os.system('cp -r ' + os.path.expanduser('~') + '/Repositories/EngineUtils bin')
-    os.system('cp -r ' + os.path.expanduser('~') + '/TestFiles .')
+    # files copied into the vm can be found in the /vagrant directory
+    #os.system('cp ' + os.path.expanduser('~') + '/Repositories/vm-bashrc/* .')
+    #os.system('cp ' + os.path.expanduser('~') + '/Builds/* .')
+    #os.system('cp -r ' + os.path.expanduser('~') + '/Repositories/OEMValidation/* .')
+    #os.system('cp -r ' + os.path.expanduser('~') + '/Repositories/EngineUtils bin')
+    #os.system('cp -r ' + os.path.expanduser('~') + '/TestFiles .')
     # generate vagrantfile
     with open("Vagrantfile", "w") as vagrantfile:
         vagrantfile.write('Vagrant.configure(2) do |config|\n')
