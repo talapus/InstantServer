@@ -19,7 +19,7 @@ def usage():
 
 def get_box(os):
     if os.lower() == 'fedora':
-        return('  config.vm.box = "fedora/24-cloud-base"\n'
+        return('  config.vm.box = "fedora/26-cloud-base"\n'
                + '  config.vm.provision "shell", inline: <<-SHELL\n'
                + '    sudo dnf install -y python-pip\n'
                + '    sudo dnf install -y vim\n'
@@ -44,7 +44,8 @@ def get_box(os):
                + '    cp /vagrant/bashrc-ubuntu /home/vagrant/.bashrc\n'
                + '  SHELL\n')
     elif os.lower() == 'debian':
-        return('  config.vm.box = "debian/jessie64"\n'
+        return('  config.vm.box = "bento/debian-9.0"\n'
+        # return('  config.vm.box = "debian/jessie64"\n'
                + '  config.vm.provision "shell", inline: <<-SHELL\n'
                + '    sudo apt-get install -y python-pip\n'
                + '    sudo apt-get install -y vim\n'
@@ -61,10 +62,9 @@ def setup_system(os_name):
     os.mkdir(vm_dir)
     os.chdir(vm_dir)
     # files copied into the vm can be found in the /vagrant directory
-    #os.system('cp ' + os.path.expanduser('~') + '/Repositories/vm-bashrc/* .')
+    #os.system('cp ' + os.path.expanduser('~') + '/Repositories/InstantServer/* .')
     #os.system('cp ' + os.path.expanduser('~') + '/Builds/* .')
-    #os.system('cp -r ' + os.path.expanduser('~') + '/Repositories/OEMValidation/* .')
-    #os.system('cp -r ' + os.path.expanduser('~') + '/Repositories/EngineUtils bin')
+    #os.system('cp -r ' + os.path.expanduser('~') + '/Repositories/Utils bin')
     #os.system('cp -r ' + os.path.expanduser('~') + '/TestFiles .')
     # generate vagrantfile
     with open("Vagrantfile", "w") as vagrantfile:
